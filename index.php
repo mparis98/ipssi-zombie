@@ -1,22 +1,17 @@
 <?php
 
-use GuzzleHttp\Psr7\ServerRequest;
-use InvoiceApp\Action\Invoice\Listing;
-use InvoiceApp\DependencyInjection\Container;
+use InvoiceApp\Entity\Resistant;
+use InvoiceApp\Entity\Zombie;
+use InvoiceApp\Entity\Combat;
+use InvoiceApp\ValueObject\Weapons;
 
 require __DIR__.'/vendor/autoload.php';
 
-//$request = ServerRequestFactory::fromGlobals();
-$request = ServerRequest::fromGlobals();
+$resistant = new Resistant(rand(1, 250), new Weapons("Magnum",rand(3, 50)));
+$zombie = new Zombie(rand(1, 250), rand(1, 20));
+$combat = new Combat($resistant, $zombie);
 
-$container = new Container(require __DIR__.'/config/container.php');
+echo "Joueur :".$resistant->toString()."<br>";
+echo "Zombie :".$zombie->toString();
 
-/* @var $action Listing */
-$action = $container->get(Listing::class);
-$response = $action->handle($request);
-
-foreach ($response->getHeaders() as $key => $value) {
-    $value = implode(', ', $value);
-    header("$key: $value");
-}
-echo $response->getBody();
+$combat->game($resistant, $zombie);
